@@ -1,0 +1,34 @@
+.fade-in {
+    font-family: "Montserrat Medium";
+    max-width: 40ch;
+    text-align: center;
+    transform: scale(0.94);
+    animation: scale 3s forwards cubic-bezier(0.5, 1, 0.89, 1);
+}
+
+span.fade {
+    display: inline-block;
+    opacity: 0;
+    filter: blur(4px);
+}
+
+@for $i from 1 through 100 {
+    span.fade:nth-child(#{$i}) {
+        animation: fade-in 0.8s $i * 0.1s forwards cubic-bezier(0.11, 0, 0.5, 0);
+    }
+}
+
+@keyframes fade-in {
+    100% {
+        opacity: 1;
+        filter: blur(0);
+    }
+}
+
+.galaxy_gradient {
+    @apply bg-gradient-to-r from-purple-900 via-indigo-900 to-blue-900 bg-clip-text text-transparent;
+}
+
+.fade-in.galaxy_gradient span.fade {
+    @apply bg-gradient-to-r from-purple-900 via-indigo-900 to-blue-900 bg-clip-text text-transparent;
+}

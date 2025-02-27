@@ -1,0 +1,58 @@
+{
+  "profile": {
+    "title": "Profile",
+    "my_name": "My",
+    "welcome_message": "Welcome to your personalized profile page. Share your exceptional prompts and inspire others with the power of your imagination",
+    "delete_confirmation": "Are you sure you want to delete this prompt?",
+    "button": {
+      "yes": "Yes",
+      "no": "No"
+    },
+    "user_welcome_message": "Welcome to {user}'s personalized profile page. Explore {user}'s exceptional prompts and be inspired by the power of their imagination"
+  },
+  "no_email": "No email",
+  "language_switcher": {
+    "label": "Language",
+    "options": {
+      "en": "English",
+      "ja": "Japanese",
+      "vi": "Vietnamese",
+      "zh": "Chinese"
+    }
+  },
+  "nav": {
+    "create_prompt": "Create Prompt",
+    "my_profile": "My Profile"
+  },
+  "home": {
+    "description": "PromptHub is AI Prompt Sharing Platform for internal to discover, create and share creative prompts."
+  },
+  "toast": {
+    "delete_success": "Prompt deleted successfully",
+    "delete_error": "Something went wrong",
+    "update_success": "Prompt updated successfully",
+    "update_error": "Something went wrong while updating the prompt",
+    "missing_prompt_id": "Missing PromptId"
+  },
+  "user_image": "user image",
+  "tick_icon": "tick icon",
+  "copy_icon": "copy icon",
+  "Edit": "Edit",
+  "Editing": "Editing",
+  "Delete": "Delete",
+  "Create": "Create",
+  "Createing": "Creating",
+  "Cancel": "Cancel",
+  "prompt_created_successfully": "Prompt created successfully",
+  "something_went_wrong": "Something went wrong",
+  "search_placeholder": "Search for a tag or a username",
+  "Create_prompt": "Create Prompt",
+  "Create_description": "Create and share amazing prompts, and let your imagination run wild with any AI-powered platform",
+  "Edit_prompt": "Edit Prompt",
+  "Edit_description": "Edit and share amazing prompts, and let your imagination run wild with any AI-powered platform",
+  "your_ai_prompt": "Your AI Prompt",
+  "write_your_prompt_here": "Write your prompt here",
+  "field_of_prompt": "Field of Prompt",
+  "example_tags": "#product, #coding, #idea, etc.",
+  "tag_placeholder": "#Tag"
+}
