@@ -10,8 +10,10 @@ export const env = createEnv({
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
-    FIRESTORE_PROJECT_ID: z.string(),
+    GOOGLE_CLOUD_PROJECT_ID: z.string(),
     FIRESTORE_DATABASE_ID: z.string(),
+    GOOGLE_CLOUD_REGION: z.string(),
+    MODEL_EMBEDDING: z.string(),
   },
 
   /**
@@ -29,8 +31,10 @@ export const env = createEnv({
    */
   runtimeEnv: {
     NODE_ENV: process.env.NODE_ENV,
-    FIRESTORE_PROJECT_ID: process.env.FIRESTORE_PROJECT_ID,
+    GOOGLE_CLOUD_PROJECT_ID: process.env.GOOGLE_CLOUD_PROJECT_ID,
+    GOOGLE_CLOUD_REGION: process.env.GOOGLE_CLOUD_REGION,
     FIRESTORE_DATABASE_ID: process.env.FIRESTORE_DATABASE_ID,
+    MODEL_EMBEDDING: process.env.MODEL_EMBEDDING,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
   /**

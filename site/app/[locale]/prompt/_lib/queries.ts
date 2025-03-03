@@ -1,158 +1,218 @@
 import "server-only";
-
-import { db } from "@/db";
-import { type Task, tasks } from "@/db/schema";
-import {
-  and,
-  asc,
-  count,
-  desc,
-  gt,
-  gte,
-  ilike,
-  inArray,
-  lte,
-} from "drizzle-orm";
-
-import { filterColumns } from "@/lib/filter-columns";
+import { Prompt, promptsCollection } from "@/db/schema";
+import { Query, DocumentData, WhereFilterOp } from "@google-cloud/firestore";
 import { unstable_cache } from "@/lib/unstable-cache";
+import { getEmbedding } from "./embedding";
+import { type Filter } from "@/types";
 
-import type { GetTasksSchema } from "./validations";
+export interface GetPromptsInput {
+  page: number;
+  perPage: number;
+  userEmail?: string;
+  appName?: string;
+  searchTerm?: string;
+  from?: string;
+  to?: string;
+  filters?: Filter<Prompt>[];
+  sort?: { id: string; desc: boolean }[];
+}
 
-export async function getTasks(input: GetTasksSchema) {
+// Map custom filter operators to Firestore WhereFilterOp
+const operatorMap: Partial<Record<string, WhereFilterOp>> = {
+  'eq': '==',
+  'ne': '!=',
+  'lt': '<',
+  'lte': '<=',
+  'gt': '>',
+  'gte': '>=',
+};
+
+export async function getPrompts(input: GetPromptsInput) {
   return await unstable_cache(
     async () => {
       try {
-        const offset = (input.page - 1) * input.perPage;
-        const fromDate = input.from ? new Date(input.from) : undefined;
-        const toDate = input.to ? new Date(input.to) : undefined;
-        const advancedTable = input.flags.includes("advancedTable");
+        let query: Query<DocumentData> = promptsCollection;
 
-        const advancedWhere = filterColumns({
-          table: tasks,
-          filters: input.filters,
-          joinOperator: input.joinOperator,
-        });
+        // Apply non-embedding filters first
+        if (input.userEmail) {
+          query = query.where('userEmail', '==', input.userEmail);
+        }
 
-        const where = advancedTable
-          ? advancedWhere
-          : and(
-              input.title ? ilike(tasks.title, `%${input.title}%`) : undefined,
-              input.status.length > 0
-                ? inArray(tasks.status, input.status)
-                : undefined,
-              input.priority.length > 0
-                ? inArray(tasks.priority, input.priority)
-                : undefined,
-              fromDate ? gte(tasks.createdAt, fromDate) : undefined,
-              toDate ? lte(tasks.createdAt, toDate) : undefined,
-            );
+        if (input.appName && input.appName !== "") {
+          query = query.where('appName', '==', input.appName);
+        }
 
-        const orderBy =
-          input.sort.length > 0
-            ? input.sort.map((item) =>
-                item.desc ? desc(tasks[item.id]) : asc(tasks[item.id]),
-              )
-            : [asc(tasks.createdAt)];
+        if (input.from) {
+          query = query.where('createdAt', '>=', new Date(input.from));
+        }
 
-        const { data, total } = await db.transaction(async (tx) => {
-          const data = await tx
-            .select()
-            .from(tasks)
-            .limit(input.perPage)
-            .offset(offset)
-            .where(where)
-            .orderBy(...orderBy);
+        if (input.to) {
+          query = query.where('createdAt', '<=', new Date(input.to));
+        }
 
-          const total = await tx
-            .select({
-              count: count(),
-            })
-            .from(tasks)
-            .where(where)
-            .execute()
-            .then((res) => res[0]?.count ?? 0);
+        // Apply advanced filters if provided
+        if (input.filters?.length) {
+          input.filters.forEach((filter) => {
+            if (filter.value && filter.operator) {
+              const firestoreOp = operatorMap[filter.operator];
+              if (firestoreOp) {
+                query = query.where(filter.id, firestoreOp, filter.value);
+              }
+            }
+          });
+        }
 
+        // Get base query ordered by createdAt
+        query = query.orderBy('createdAt', 'desc');
+
+        // Add additional sort fields
+        if (input.sort?.length) {
+          input.sort.forEach(({ id, desc }) => {
+            if (id !== 'createdAt') {
+              query = query.orderBy(id, desc ? 'desc' : 'asc');
+            }
+          });
+        }
+
+        // Apply vector similarity search if searchTerm is provided
+        if (input.searchTerm) {
+          const searchEmbedding = await getEmbedding(input.searchTerm);
+          query = query.findNearest({
+            vectorField: 'promptNameEmbedding',
+            queryVector: searchEmbedding,
+            limit: 10,
+            distanceMeasure: 'COSINE',
+          }).query;
+        }
+
+        // Get all matching documents before pagination
+        const snapshot = await query.get();
+
+        let prompts = snapshot.docs.map(doc => {
+          const data = doc.data();
           return {
-            data,
-            total,
-          };
+            promptId: doc.id,
+            appName: data.appName,
+            userEmail: data.userEmail,
+            anonymous: data.anonymous,
+            promptName: data.promptName,
+            promptNameEmbedding: data.promptNameEmbedding || [],
+            content: data.content,
+            howToUse: data.howToUse,
+            likedBy: data.likedBy || [],
+            bookmarkedBy: data.bookmarkedBy || [],
+            createdAt: data.createdAt?.toDate() || new Date(),
+            updatedAt: data.updatedAt?.toDate() || new Date(),
+          } as Prompt;
         });
 
+        // Handle pagination after all filtering
+        const total = prompts.length;
         const pageCount = Math.ceil(total / input.perPage);
-        return { data, pageCount };
-      } catch (_err) {
-        return { data: [], pageCount: 0 };
+        const start = (input.page - 1) * input.perPage;
+        const end = start + input.perPage;
+
+        return {
+          data: prompts.slice(start, end),
+          pageCount,
+          total
+        };
+      } catch (err) {
+        console.error('Error fetching prompts:', err);
+        return {
+          data: [],
+          pageCount: 0,
+          total: 0
+        };
       }
     },
     [JSON.stringify(input)],
     {
       revalidate: 3600,
-      tags: ["tasks"],
-    },
+      tags: ["prompts"],
+    }
   )();
 }
 
-export async function getTaskStatusCounts() {
-  return unstable_cache(
+export async function getPromptsByUserEmail(userEmail: string) {
+  return await unstable_cache(
     async () => {
       try {
-        return await db
-          .select({
-            status: tasks.status,
-            count: count(),
-          })
-          .from(tasks)
-          .groupBy(tasks.status)
-          .having(gt(count(), 0))
-          .then((res) =>
-            res.reduce(
-              (acc, { status, count }) => {
-                acc[status] = count;
-                return acc;
-              },
-              {} as Record<Task["status"], number>,
-            ),
-          );
-      } catch (_err) {
-        return {} as Record<Task["status"], number>;
+        const snapshot = await promptsCollection
+          .where('userEmail', '==', userEmail)
+          .orderBy('createdAt', 'desc')
+          .get();
+
+        return snapshot.docs.map(doc => {
+          const data = doc.data();
+          return {
+            promptId: doc.id,
+            appName: data.appName,
+            userEmail: data.userEmail,
+            anonymous: data.anonymous,
+            promptName: data.promptName,
+            promptNameEmbedding: data.promptNameEmbedding || [],
+            content: data.content,
+            howToUse: data.howToUse,
+            likedBy: data.likedBy || [],
+            bookmarkedBy: data.bookmarkedBy || [],
+            createdAt: data.createdAt?.toDate() || new Date(),
+            updatedAt: data.updatedAt?.toDate() || new Date(),
+          } as Prompt;
+        });
+      } catch (err) {
+        console.error('Error fetching prompts by email:', err);
+        return [];
       }
     },
-    ["task-status-counts"],
+    [`prompts-by-email-${userEmail}`],
     {
       revalidate: 3600,
-    },
+      tags: ["prompts"],
+    }
   )();
 }
 
-export async function getTaskPriorityCounts() {
-  return unstable_cache(
+export async function getPromptsByAppName(appName: string) {
+  return await unstable_cache(
     async () => {
       try {
-        return await db
-          .select({
-            priority: tasks.priority,
-            count: count(),
-          })
-          .from(tasks)
-          .groupBy(tasks.priority)
-          .having(gt(count(), 0))
-          .then((res) =>
-            res.reduce(
-              (acc, { priority, count }) => {
-                acc[priority] = count;
-                return acc;
-              },
-              {} as Record<Task["priority"], number>,
-            ),
-          );
-      } catch (_err) {
-        return {} as Record<Task["priority"], number>;
+        let query: Query<DocumentData> = promptsCollection;
+
+        if (appName && appName !== "") {
+          query = query.where('appName', '==', appName);
+        }
+
+        const snapshot = await query
+          .orderBy('createdAt', 'desc')
+          .get();
+
+        return snapshot.docs.map(doc => {
+          const data = doc.data();
+          return {
+            promptId: doc.id,
+            appName: data.appName,
+            userEmail: data.userEmail,
+            anonymous: data.anonymous,
+            promptName: data.promptName,
+            promptNameEmbedding: data.promptNameEmbedding || [],
+            content: data.content,
+            howToUse: data.howToUse,
+            likedBy: data.likedBy || [],
+            bookmarkedBy: data.bookmarkedBy || [],
+            createdAt: data.createdAt?.toDate() || new Date(),
+            updatedAt: data.updatedAt?.toDate() || new Date(),
+          } as Prompt;
+        });
+      } catch (err) {
+        console.error('Error fetching prompts by app:', err);
+        return [];
       }
     },
-    ["task-priority-counts"],
+    [`prompts-by-app-${appName}`],
     {
       revalidate: 3600,
-    },
+      tags: ["prompts"],
+    }
   )();
 }

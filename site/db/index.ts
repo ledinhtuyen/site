@@ -1,8 +1,9 @@
 import { env } from "@/env.js";
-import { drizzle } from "drizzle-orm/postgres-js";
-import postgres from "postgres";
+import { Firestore } from "@google-cloud/firestore";
 
-import * as schema from "./schema";
+const firestore = new Firestore({
+  projectId: env.GOOGLE_CLOUD_PROJECT_ID,
+  databaseId: env.FIRESTORE_DATABASE_ID,
+});
 
-const client = postgres(env.DATABASE_URL);
-export const db = drizzle(client, { schema });
+export { firestore as db };

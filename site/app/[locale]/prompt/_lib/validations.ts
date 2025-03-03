@@ -1,4 +1,4 @@
-import { type Task, tasks } from "@/db/schema";
+import { type Prompt, AppNames } from "@/db/schema";
 import {
   createSearchParamsCache,
   parseAsArrayOf,
@@ -11,40 +11,47 @@ import * as z from "zod";
 import { getFiltersStateParser, getSortingStateParser } from "@/lib/parsers";
 
 export const searchParamsCache = createSearchParamsCache({
-  flags: parseAsArrayOf(z.enum(["advancedTable", "floatingBar"])).withDefault(
-    [],
-  ),
+  flags: parseAsArrayOf(z.enum(["advancedTable", "floatingBar"])).withDefault([]),
+  searchTerm: parseAsString.withDefault(""),
+  promptName: parseAsString.withDefault(""),
+  appName: parseAsStringEnum([...Object.values(AppNames), ""]).withDefault(""),
+  userEmail: parseAsString.withDefault(""),
   page: parseAsInteger.withDefault(1),
   perPage: parseAsInteger.withDefault(10),
-  sort: getSortingStateParser<Task>().withDefault([
+  sort: getSortingStateParser<Prompt>().withDefault([
     { id: "createdAt", desc: true },
   ]),
-  title: parseAsString.withDefault(""),
-  status: parseAsArrayOf(z.enum(tasks.status.enumValues)).withDefault([]),
-  priority: parseAsArrayOf(z.enum(tasks.priority.enumValues)).withDefault([]),
   from: parseAsString.withDefault(""),
   to: parseAsString.withDefault(""),
   // advanced filter
   filters: getFiltersStateParser().withDefault([]),
   joinOperator: parseAsStringEnum(["and", "or"]).withDefault("and"),
+  anonymous: parseAsStringEnum(["true", "false"]).withDefault("false"),
 });
 
-export const createTaskSchema = z.object({
-  title: z.string(),
-  label: z.enum(tasks.label.enumValues),
-  status: z.enum(tasks.status.enumValues),
-  priority: z.enum(tasks.priority.enumValues),
+export const createPromptSchema = z.object({
+  appName: z.enum(Object.values(AppNames) as [string, ...string[]], {
+    required_error: "App name is required",
+    invalid_type_error: "Invalid app name",
+  }),
+  userEmail: z.string().email("Invalid email address"),
+  anonymous: z.boolean().default(false),
+  promptName: z.string().min(1, "Prompt name is required"),
+  content: z.string().min(1, "Content is required"),
+  howToUse: z.string().optional(),
 });
 
-export const updateTaskSchema = z.object({
-  title: z.string().optional(),
-  label: z.enum(tasks.label.enumValues).optional(),
-  status: z.enum(tasks.status.enumValues).optional(),
-  priority: z.enum(tasks.priority.enumValues).optional(),
+export const updatePromptSchema = z.object({
+  promptId: z.string().min(1, "Prompt ID is required"),
+  appName: z.enum(Object.values(AppNames) as [string, ...string[]]).optional(),
+  promptName: z.string().min(1, "Prompt name is required").optional(),
+  content: z.string().min(1, "Content is required").optional(),
+  howToUse: z.string().optional(),
+  anonymous: z.boolean().optional(),
 });
 
-export type GetTasksSchema = Awaited<
+export type GetPromptsSchema = Awaited<
   ReturnType<typeof searchParamsCache.parse>
 >;
-export type CreateTaskSchema = z.infer<typeof createTaskSchema>;
-export type UpdateTaskSchema = z.infer<typeof updateTaskSchema>;
+export type CreatePromptSchema = z.infer<typeof createPromptSchema>;
+export type UpdatePromptSchema = z.infer<typeof updatePromptSchema>;
