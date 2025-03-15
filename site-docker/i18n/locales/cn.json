@@ -1,0 +1,58 @@
+{
+  "profile": {
+    "title": "个人资料",
+    "my_name": "我的",
+    "welcome_message": "欢迎来到您的个性化个人资料页面。分享您的特别提示，并通过您的想象力激励他人",
+    "delete_confirmation": "您确定要删除此提示吗？",
+    "button": {
+      "yes": "是",
+      "no": "否"
+    },
+    "user_welcome_message": "欢迎来到 {user} 的个性化个人资料页面。探索 {user} 的特别提示，并通过他们的想象力获得启发"
+  },
+  "no_email": "没有电子邮件",
+  "language_switcher": {
+    "label": "语言",
+    "options": {
+      "en": "英语",
+      "ja": "日语",
+      "vi": "越南语",
+      "zh": "中文"
+    }
+  },
+  "nav": {
+    "create_prompt": "创建提示",
+    "my_profile": "我的资料"
+  },
+  "home": {
+    "description": "PromptHub 是一个 AI 提示共享平台，用于内部发现、创建和共享创意提示。"
+  },
+  "toast": {
+    "delete_success": "提示已成功删除",
+    "delete_error": "出了些问题",
+    "update_success": "提示已成功更新",
+    "update_error": "更新提示时出了些问题",
+    "missing_prompt_id": "缺少提示ID"
+  },
+  "user_image": "用户图片",
+  "tick_icon": "勾选图标",
+  "copy_icon": "复制图标",
+  "Edit": "编辑",
+  "Editing": "编辑中",
+  "Delete": "删除",
+  "Create": "创建",
+  "Createing": "创建中",
+  "Cancel": "取消",
+  "prompt_created_successfully": "提示已成功创建",
+  "something_went_wrong": "出了些问题",
+  "search_placeholder": "搜索标签或用户名",
+  "Create_prompt": "创建提示",
+  "Create_description": "创建并分享惊人的提示，让您的想象力在任何 AI 驱动的平台上尽情发挥",
+  "Edit_prompt": "编辑提示",
+  "Edit_description": "编辑并分享惊人的提示，让您的想象力在任何 AI 驱动的平台上尽情发挥",
+  "your_ai_prompt": "您的 AI 提示",
+  "write_your_prompt_here": "在这里写下您的提示",
+  "field_of_prompt": "提示领域",
+  "example_tags": "#产品, #编码, #创意 等",
+  "tag_placeholder": "#标签"
+}

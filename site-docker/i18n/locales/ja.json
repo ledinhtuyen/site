@@ -1,0 +1,58 @@
+{
+  "profile": {
+    "title": "プロフィール",
+    "my_name": "私の",
+    "welcome_message": "あなたの個別のプロフィールページへようこそ。あなたの特別なプロンプトを共有し、あなたの想像力の力で他の人にインスピレーションを与えましょう",
+    "delete_confirmation": "このプロンプトを削除してもよろしいですか？",
+    "button": {
+      "yes": "はい",
+      "no": "いいえ"
+    },
+    "user_welcome_message": "{user} の個別のプロフィールページへようこそ。{user} の特別なプロンプトを探索し、彼らの想像力の力にインスパイアされましょう"
+  },
+  "no_email": "メールがありません",
+  "language_switcher": {
+    "label": "言語",
+    "options": {
+      "en": "英語",
+      "ja": "日本語",
+      "vi": "ベトナム語",
+      "zh": "中国語"
+    }
+  },
+  "nav": {
+    "create_prompt": "プロンプトを作成",
+    "my_profile": "私のプロフィール"
+  },
+  "home": {
+    "description": "PromptHub は、内部で創造的なプロンプトを発見、作成、共有するための AI プロンプト共有プラットフォームです。"
+  },
+  "toast": {
+    "delete_success": "プロンプトが正常に削除されました",
+    "delete_error": "問題が発生しました",
+    "update_success": "プロンプトが正常に更新されました",
+    "update_error": "プロンプトの更新中に問題が発生しました",
+    "missing_prompt_id": "プロンプトIDがありません"
+  },
+  "user_image": "ユーザー画像",
+  "tick_icon": "チェックアイコン",
+  "copy_icon": "コピーアイコン",
+  "Edit": "編集",
+  "Editing": "編集中",
+  "Delete": "削除",
+  "Create": "作成",
+  "Createing": "作成中",
+  "Cancel": "キャンセル",
+  "prompt_created_successfully": "プロンプトが正常に作成されました",
+  "something_went_wrong": "問題が発生しました",
+  "search_placeholder": "タグまたはユーザー名を検索",
+  "Create_prompt": "プロンプトを作成",
+  "Create_description": "素晴らしいプロンプトを作成して共有し、AI駆動のプラットフォームで想像力を自由に発揮しましょう",
+  "Edit_prompt": "プロンプトを編集",
+  "Edit_description": "素晴らしいプロンプトを編集して共有し、AI駆動のプラットフォームで想像力を自由に発揮しましょう",
+  "your_ai_prompt": "あなたのAIプロンプト",
+  "write_your_prompt_here": "ここにプロンプトを書いてください",
+  "field_of_prompt": "プロンプトの分野",
+  "example_tags": "#製品, #コーディング, #アイデア など",
+  "tag_placeholder": "#タグ"
+}
