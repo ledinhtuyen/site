@@ -1,0 +1,58 @@
+{
+  "profile": {
+    "title": "Profile",
+    "my_name": "My",
+    "welcome_message": "Chào mừng bạn đến với trang hồ sơ cá nhân của bạn. Chia sẻ những lời nhắc đặc biệt của bạn và truyền cảm hứng cho người khác bằng sức mạnh của trí tưởng tượng của bạn",
+    "delete_confirmation": "Bạn có chắc chắn muốn xóa prompt này không?",
+    "button": {
+      "yes": "Có",
+      "no": "Không"
+    },
+    "user_welcome_message": "Chào mừng bạn đến với trang hồ sơ cá nhân của {user}. Khám phá những lời nhắc đặc biệt của {user} và được truyền cảm hứng bởi sức mạnh của trí tưởng tượng của họ"
+  },
+  "no_email": "Không có email",
+  "language_switcher": {
+    "label": "Ngôn ngữ",
+    "options": {
+      "en": "Tiếng Anh",
+      "ja": "Tiếng Nhật",
+      "vi": "Tiếng Việt",
+      "zh": "Tiếng Trung"
+    }
+  },
+  "nav": {
+    "create_prompt": "Tạo Prompt",
+    "my_profile": "Hồ sơ của tôi"
+  },
+  "home": {
+    "description": "PromptHub là nền tảng chia sẻ Prompt AI để nội bộ khám phá, tạo và chia sẻ các prompt sáng tạo."
+  },
+  "toast": {
+    "delete_success": "Lời nhắc đã được xóa thành công",
+    "delete_error": "Đã xảy ra lỗi",
+    "update_success": "Lời nhắc đã được cập nhật thành công",
+    "update_error": "Đã xảy ra lỗi khi cập nhật lời nhắc",
+    "missing_prompt_id": "Thiếu ID lời nhắc"
+  },
+  "user_image": "hình ảnh người dùng",
+  "tick_icon": "biểu tượng đánh dấu",
+  "copy_icon": "biểu tượng sao chép",
+  "Edit": "Chỉnh sửa",
+  "Editing": "Đang chỉnh sửa",
+  "Delete": "Xóa",
+  "Create": "Tạo",
+  "Createing": "Đang tạo",
+  "Cancel": "Hủy",
+  "prompt_created_successfully": "Lời nhắc đã được tạo thành công",
+  "something_went_wrong": "Đã xảy ra lỗi",
+  "search_placeholder": "Tìm kiếm thẻ hoặc tên người dùng",
+  "Create_prompt": "Tạo Prompt",
+  "Create_description": "Tạo và chia sẻ những lời nhắc tuyệt vời, và để trí tưởng tượng của bạn bay xa với bất kỳ nền tảng AI nào",
+  "Edit_prompt": "Chỉnh sửa Prompt",
+  "Edit_description": "Chỉnh sửa và chia sẻ những lời nhắc tuyệt vời, và để trí tưởng tượng của bạn bay xa với bất kỳ nền tảng AI nào",
+  "your_ai_prompt": "Lời nhắc AI của bạn",
+  "write_your_prompt_here": "Viết lời nhắc của bạn ở đây",
+  "field_of_prompt": "Lĩnh vực của lời nhắc",
+  "example_tags": "#sản phẩm, #mã hóa, #ý tưởng, v.v.",
+  "tag_placeholder": "#Thẻ"
+}
